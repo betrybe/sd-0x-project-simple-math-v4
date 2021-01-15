@@ -1,0 +1,93 @@
+on:
+  workflow_dispatch:
+    inputs:
+      dispatch_token:
+        description: 'Token that authorize the dispatch'
+        required: true
+      head_sha:
+        description: 'Head commit SHA that dispatched the workflow'
+        required: true
+
+jobs:
+  checkout_files:
+    runs-on: self-hosted
+    - uses: actions/checkout@v2
+    - name: Checkout Blocked Files Checkout action
+      uses: actions/checkout@v2
+      with:
+        repository: betrybe/blocked-files-checkout-action
+        ref: v1
+        token: ${{ secrets.GIT_HUB_PAT }}
+        path: .github/actions/blocked-files-checkout-action
+    - name: Checkout protected files
+      uses: ./.github/actions/blocked-files-checkout-action
+      with:
+        restore_branch: 'main'
+
+  eslint:
+    runs-on: self-hosted
+    needs: checkout_files
+    - uses: actions/checkout@v2
+    - uses: actions/setup-node@v1.4.4
+      with:
+        node-version: '12'
+    - name: Check out ESLint evaluator
+      uses: actions/checkout@v2
+      with:
+        repository: betrybe/eslint-linter-action
+        ref: v2
+        token: ${{ secrets.GIT_HUB_PAT }}
+        path: .github/actions/eslint-evaluator
+      - name: Run ESLint evaluator
+        uses: ./.github/actions/eslint-evaluator
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+  stylelint:
+    runs-on: self-hosted
+    needs: checkout_files
+    - uses: actions/checkout@v2
+    - uses: actions/setup-node@v1.4.4
+      with:
+        node-version: '12'
+    - name: Check out Stylelint evaluator
+      uses: actions/checkout@v2
+      with:
+        repository: betrybe/stylelint-linter-action
+        ref: v1
+        token: ${{ secrets.GIT_HUB_PAT }}
+        path: .github/actions/stylelint-evaluator
+      - name: Run Stylelint evaluator
+        uses: ./.github/actions/stylelint-evaluator
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+  evaluator:
+    runs-on: self-hosted
+    name: Evaluator
+    needs: [eslint, stylelint]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Check out Jest evaluator
+        uses: actions/checkout@v2
+        with:
+          repository: betrybe/jest-evaluator-action
+          ref: v7
+          token: ${{ secrets.GIT_HUB_PAT }}
+          path: .github/actions/jest-evaluator
+      - name: Check out Store evaluation
+        uses: actions/checkout@v2
+        with:
+          repository: betrybe/store-evaluation-action
+          ref: v2
+          token: ${{ secrets.GIT_HUB_PAT }}
+          path: .github/actions/store-evaluation
+      - name: Run Jest evaluator
+        id: test
+        uses: ./.github/actions/jest-evaluator
+      - name: Run Store evaluation
+        uses: ./.github/actions/store-evaluation
+        with:
+          evaluation-data: ${{ steps.test.outputs.result }}
+          environment: staging
+          pr-number: ${{ github.event.number }}
