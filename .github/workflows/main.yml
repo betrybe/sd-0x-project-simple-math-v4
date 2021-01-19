@@ -46,10 +46,10 @@ jobs:
         uses: actions/setup-node@v1.4.4
         with:
           node-version: '12'
-      - name: Checkout protected files
-        uses: ./.github/actions/blocked-files-checkout-action
-        with:
-          restore_branch: 'main'
+      # - name: Checkout protected files
+      #   uses: ./.github/actions/blocked-files-checkout-action
+      #   with:
+      #     restore_branch: 'main'
       - name: Run ESLint evaluator
         uses: ./.github/actions/eslint-evaluator
         with:
