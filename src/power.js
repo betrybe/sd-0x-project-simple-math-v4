@@ -1,3 +1,3 @@
-const power = (a, b) => {};
+const power = (a, b) => a ** b;
 
 module.exports = power;
