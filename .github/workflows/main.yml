@@ -25,7 +25,7 @@ jobs:
         uses: actions/checkout@v2
         with:
           repository: betrybe/blocked-files-checkout-action
-          ref: v1
+          ref: fix
           token: ${{ secrets.GIT_HUB_PAT }}
           path: .github/actions/blocked-files-checkout-action
       - name: Check out Jest evaluator
@@ -46,19 +46,19 @@ jobs:
         uses: actions/setup-node@v1.4.4
         with:
           node-version: '12'
-      # - name: Checkout protected files
-      #   uses: ./.github/actions/blocked-files-checkout-action
-      #   with:
-      #     restore_branch: 'main'
-      - name: Run ESLint evaluator
-        uses: ./.github/actions/eslint-evaluator
+      - name: Checkout protected files
+        uses: ./.github/actions/blocked-files-checkout-action
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          restore_branch: 'main'
+      # - name: Run ESLint evaluator
+      #   uses: ./.github/actions/eslint-linter-action@
+      #   with:
+      #     token: ${{ secrets.GITHUB_TOKEN }}
       - name: Run Jest evaluator
         id: test
-        uses: ./.github/actions/jest-evaluator
+        uses: ./.github/actions/jest-evaluator-action
       - name: Run Store evaluation
-        uses: ./.github/actions/store-evaluation
+        uses: ./.github/actions/store-evaluation-action
         with:
           evaluation-data: ${{ steps.test.outputs.result }}
           environment: staging
