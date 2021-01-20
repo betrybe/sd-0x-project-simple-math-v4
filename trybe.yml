@@ -1,4 +1,3 @@
 ignore_files:
   - src/app.test.js
-  - .editorconfig
-  - .eslintrc
+  - .eslintrc.json
