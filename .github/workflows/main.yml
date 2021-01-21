@@ -12,6 +12,8 @@ jobs:
   evaluator:
     runs-on: self-hosted
     steps:
+      - name: Run GH Context
+        run: echo "$GITHUB_CONTEXT"
       - name: Check out project repository
         uses: actions/checkout@v2
       - name: Check out ESLint evaluator
