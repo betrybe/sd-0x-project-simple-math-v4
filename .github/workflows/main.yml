@@ -32,7 +32,7 @@ jobs:
         uses: actions/checkout@v2
         with:
           repository: betrybe/jest-evaluator-action
-          ref: v8
+          ref: fix
           token: ${{ secrets.GIT_HUB_PAT }}
           path: .github/actions/jest-evaluator
       - name: Check out Store evaluation
@@ -57,6 +57,8 @@ jobs:
       - name: Run Jest evaluator
         id: test
         uses: ./.github/actions/jest-evaluator
+        with:
+          pr_student_username: ${{ github.event.pull_request.user.login }}
       - name: Run Store evaluation
         uses: ./.github/actions/store-evaluation
         with:
