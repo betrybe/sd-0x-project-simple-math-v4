@@ -7,6 +7,12 @@ on:
       head_sha:
         description: 'Head commit SHA that dispatched the workflow'
         required: true
+      pr_author_username:
+        description: 'Pull Request author username'
+        required: true
+      pr_number:
+        description: 'Pull Request number that dispatched the workflow'
+        required: true
 
 jobs:
   evaluator:
@@ -18,21 +24,21 @@ jobs:
         uses: actions/checkout@v2
         with:
           repository: betrybe/eslint-linter-action
-          ref: v2
+          ref: learn-869
           token: ${{ secrets.GIT_HUB_PAT }}
           path: .github/actions/eslint-evaluator
       - name: Checkout Blocked Files Checkout action
         uses: actions/checkout@v2
         with:
           repository: betrybe/blocked-files-checkout-action
-          ref: fix
+          ref: learn-869
           token: ${{ secrets.GIT_HUB_PAT }}
           path: .github/actions/blocked-files-checkout
       - name: Check out Jest evaluator
         uses: actions/checkout@v2
         with:
           repository: betrybe/jest-evaluator-action
-          ref: fix
+          ref: learn-869
           token: ${{ secrets.GIT_HUB_PAT }}
           path: .github/actions/jest-evaluator
       - name: Check out Store evaluation
@@ -52,18 +58,19 @@ jobs:
         uses: ./.github/actions/blocked-files-checkout
         with:
           restore_branch: 'main'
-      # - name: Run ESLint evaluator
-      #   uses: ./.github/actions/eslint-evaluator
-      #   with:
-      #     token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Run ESLint evaluator
+        uses: ./.github/actions/eslint-evaluator
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          pr_author_username: ${{ github.event.inputs.pr_author_username }}
       - name: Run Jest evaluator
         id: test
         uses: ./.github/actions/jest-evaluator
         with:
-          pr_student_username: ${{ github.event.pull_request.user.login }}
+          pr_author_username: ${{ github.event.inputs.pr_author_username }}
       - name: Run Store evaluation
         uses: ./.github/actions/store-evaluation
         with:
           evaluation-data: ${{ steps.test.outputs.result }}
           environment: staging
-          pr-number: ${{ github.event.number }}
+          pr-number: ${{ github.event.inputs.pr_number }}
