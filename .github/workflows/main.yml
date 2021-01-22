@@ -52,8 +52,6 @@ jobs:
         uses: actions/setup-node@v1.4.4
         with:
           node-version: '12'
-      - name: Run GH Context
-        run: echo ${{ JSON.stringify(github.event) }}
       - name: Checkout protected files
         uses: ./.github/actions/blocked-files-checkout
         with:
