@@ -56,11 +56,11 @@ jobs:
         uses: ./.github/actions/blocked-files-checkout
         with:
           restore_branch: 'main'
-      - name: Run ESLint evaluator
-        uses: ./.github/actions/eslint-evaluator
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          pr_number: ${{ github.event.inputs.pr_number }}
+      # - name: Run ESLint evaluator
+      #   uses: ./.github/actions/eslint-evaluator
+      #   with:
+      #     token: ${{ secrets.GITHUB_TOKEN }}
+      #     pr_number: ${{ github.event.inputs.pr_number }}
       - name: Run Jest evaluator
         id: test
         uses: ./.github/actions/jest-evaluator
