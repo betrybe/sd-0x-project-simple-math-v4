@@ -60,7 +60,7 @@ jobs:
         uses: ./.github/actions/eslint-evaluator
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          pr_author_username: ${{ github.event.inputs.pr_author_username }}
+          pr_number: ${{ github.event.inputs.pr_number }}
       - name: Run Jest evaluator
         id: test
         uses: ./.github/actions/jest-evaluator
