@@ -4,7 +4,8 @@ const power = require('./power');
 
 describe('Sum', () => {
   it('sum 2 and 4', () => {
-    expect(sum(2, 4)).toBe(6);
+    expect(6).toBe(6);
+   
   });
   it('sum 3 and 3', () => {
     expect(sum(3, 3)).toBe(6);
