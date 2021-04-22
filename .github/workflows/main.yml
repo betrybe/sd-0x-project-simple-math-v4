@@ -18,57 +18,66 @@ jobs:
   evaluator:
     runs-on: self-hosted
     steps:
-      - name: Check out project repository
+      - name: Fetch project repository
         uses: actions/checkout@v2
-      - name: Check out ESLint evaluator
+
+      - name: Fetch ESLint evaluator
         uses: actions/checkout@v2
         with:
           repository: betrybe/eslint-linter-action
-          ref: learn-869
+          ref: v3
           token: ${{ secrets.GIT_HUB_PAT }}
           path: .github/actions/eslint-evaluator
-      - name: Checkout Blocked Files Checkout action
+
+      - name: Fetch Blocked Files Checkout action
         uses: actions/checkout@v2
         with:
           repository: betrybe/blocked-files-checkout-action
-          ref: learn-869
+          ref: v2
           token: ${{ secrets.GIT_HUB_PAT }}
           path: .github/actions/blocked-files-checkout
-      - name: Check out Jest evaluator
+
+      - name: Fetch Jest evaluator
         uses: actions/checkout@v2
         with:
           repository: betrybe/jest-evaluator-action
-          ref: learn-869
+          ref: v9
           token: ${{ secrets.GIT_HUB_PAT }}
           path: .github/actions/jest-evaluator
-      - name: Check out Store evaluation
+
+      - name: Fetch Store evaluation
         uses: actions/checkout@v2
         with:
           repository: betrybe/store-evaluation-action
           ref: v2
           token: ${{ secrets.GIT_HUB_PAT }}
           path: .github/actions/store-evaluation
+
       - name: Setup NodeJS
         uses: actions/setup-node@v1.4.4
         with:
           node-version: '12'
-      - name: Checkout protected files
+
+      - name: Restore protected files
         uses: ./.github/actions/blocked-files-checkout
         with:
           restore_branch: 'main'
+
       - name: Run ESLint evaluator
         uses: ./.github/actions/eslint-evaluator
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           pr_number: ${{ github.event.inputs.pr_number }}
-      - name: Run Jest evaluator
-        id: test
+
+      - name: Run Jest evaluation
+        id: evaluator
         uses: ./.github/actions/jest-evaluator
         with:
           pr_author_username: ${{ github.event.inputs.pr_author_username }}
+
       - name: Run Store evaluation
         uses: ./.github/actions/store-evaluation
         with:
-          evaluation-data: ${{ steps.test.outputs.result }}
+          evaluation-data: ${{ steps.evaluator.outputs.result }}
           environment: staging
           pr-number: ${{ github.event.inputs.pr_number }}
